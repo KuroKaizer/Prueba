@@ -37,7 +37,21 @@ class UserInDB(User):
     hashed_password: str 
     
 
-pwd_context = CryptContext(schemes=["bcrypt"], depreacted="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-app = FastAPI()               
+app = FastAPI()
+
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+    
+    
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_data = db[username]
+        return UserInDB(**user_data)                
